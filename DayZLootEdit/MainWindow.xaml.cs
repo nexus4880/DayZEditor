@@ -120,7 +120,11 @@ namespace DayZLootEdit {
 		}
 
 		private IEnumerable<LootType> GetItemsFromFilter() {
-			return this._filterMethod.HasValue ? Filters[this._filterMethod.Value](this._lootTable) : this._lootTable.Loot;
+			if (this._lootTable == null) {
+				return null;
+			}
+
+			return this._lootTable == null ? null : this._filterMethod.HasValue ? Filters[this._filterMethod.Value](this._lootTable) : this._lootTable.Loot;
 		}
 
 		private void UpdateDataGrid() {
