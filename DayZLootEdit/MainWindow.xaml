@@ -18,9 +18,12 @@
         <DataGrid x:Name="LootList" Margin="10,60,10,10" Grid.RowSpan="2" ItemsSource="{Binding LootTable.Loot}"
                   IsEnabled="False" SelectionChanged="LootList_SelectionChanged" PreviewKeyDown="PreviewKeyDownHandler"
                   Grid.ColumnSpan="3" />
-        <TextBox x:Name="SearchBox" Height="16" Width="180" TextChanged="ChangeSearchFilter" Grid.Column="1"
+        <TextBox x:Name="SearchBox" Height="16" Width="180" TextChanged="ChangeSearchFilter" Grid.Row="0"
+                 Grid.Column="1"
                  HorizontalAlignment="Left" VerticalAlignment="Top" Margin="400,23,0,0" />
-        <WrapPanel Orientation="Horizontal" Grid.ColumnSpan="2" Margin="602,3,10,470" Grid.Column="1">
+        <WrapPanel Orientation="Horizontal" Grid.Row="0" Grid.ColumnSpan="2" Margin="602,3,10,470" Grid.Column="1">
+            <Button Name="RemoveFilterTab" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top"
+                    Content="Remove Filter" Click="RemoveFilterTab_OnClick" />
             <Button Name="WeaponsTab" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top"
                     Content="Weapon Tab" Click="WeaponsTab_Click" />
             <Button Name="ClothesTab" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top"
@@ -46,15 +49,18 @@
                     RenderTransformOrigin="0.54,0.552" />
         </WrapPanel>
 
-        <Button x:Name="LoadBtn" Content="Load" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"
+        <Button Grid.Row="0" Grid.Column="0" x:Name="LoadBtn" Content="Load" HorizontalAlignment="Left"
+                Margin="10,10,0,0" VerticalAlignment="Top"
                 Width="40" Height="40" Click="LoadBtn_Click" />
-        <Button Content="Button" HorizontalAlignment="Left" Margin="55,10,0,0" VerticalAlignment="Top" Width="40"
+        <Button Grid.Row="0" Grid.Column="0" Content="Button" HorizontalAlignment="Left" Margin="55,10,0,0"
+                VerticalAlignment="Top" Width="40"
                 Height="40" />
-        <Button x:Name="SaveBtn" Content="Save" HorizontalAlignment="Left" Margin="55,10,0,0" VerticalAlignment="Top"
+        <Button Grid.Row="0" Grid.Column="0" x:Name="SaveBtn" Content="Save" HorizontalAlignment="Left"
+                Margin="55,10,0,0" VerticalAlignment="Top"
                 Width="40" Height="40" IsEnabled="False" Click="SaveBtn_Click" />
         <DockPanel x:Name="LootPercBox" HorizontalAlignment="Left" Height="55" LastChildFill="False" Margin="31,0,0,0"
                    VerticalAlignment="Top" Width="362" RenderTransformOrigin="3.24,0.757" IsEnabled="False"
-                   Grid.Column="1">
+                   Grid.Row="0" Grid.Column="1">
             <Label x:Name="PercLbl" Content="Nominal Percentage:" Margin="0" VerticalAlignment="Top" Height="28"
                    DockPanel.Dock="Top" RenderTransformOrigin="-0.092,0.379" HorizontalAlignment="Left" Width="119" />
             <TextBox x:Name="PercBox" Margin="122,-24,0,32" TextWrapping="Wrap" Text="100%" Width="50"
@@ -66,7 +72,7 @@
             <Button x:Name="PercBtn" Content="Set" HorizontalAlignment="Left" Margin="0,-42,0,0"
                     VerticalAlignment="Top" Width="40" Height="40" DockPanel.Dock="Right" Click="PercBtn_Click" />
         </DockPanel>
-        <Label Content="© icelane.net 2018" Grid.Column="1" HorizontalAlignment="Right" Margin="0,23,25,0"
+        <Label Content="© icelane.net 2018" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="0,23,25,0"
                VerticalAlignment="Top" Width="116" Cursor="" />
     </Grid>
 </Window>

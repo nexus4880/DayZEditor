@@ -219,6 +219,11 @@ namespace DayZLootEdit {
 			this._filterMethod = 9;
 			this.UpdateDataGrid();
 		}
+
+		private void RemoveFilterTab_OnClick(Object sender, RoutedEventArgs e) {
+			this._filterMethod = null;
+			this.UpdateDataGrid();
+		}
 #endregion
 	}
 }
