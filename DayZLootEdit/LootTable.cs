@@ -1,59 +1,44 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace DayZLootEdit
-{
-    class LootTable
-    {
-        public string FilePath { get; private set; }
-        public XElement XML { get; private set; }
+namespace DayZLootEdit {
+	internal class LootTable {
+		public LootTable(String file) {
+			this.FilePath = file;
+		}
 
-        public ObservableCollection<LootType> Loot { get; } = new ObservableCollection<LootType>();
+		public String FilePath { get; }
+		public XElement XML { get; private set; }
 
+		public ObservableCollection<LootType> Loot { get; } = new ObservableCollection<LootType>();
 
-        public LootTable(string file)
-        {
-            FilePath = file;
-        }
+		public void LoadFile() {
+			this.XML = XElement.Load(this.FilePath);
+			this.process();
+		}
 
-        public void LoadFile()
-        {
-            XML = XElement.Load(FilePath);
-            process();
-        }
+		public void SaveFile() {
+			FileInfo file = new FileInfo(this.FilePath);
 
-        public void SaveFile()
-        {
-            FileInfo file = new FileInfo(FilePath);
+			if (file.Exists) {
+				FileInfo backup = new FileInfo(file.FullName + ".original.xml");
 
-            if (file.Exists)
-            {
-                FileInfo backup = new FileInfo(file.FullName + ".original.xml");
+				if (!backup.Exists) {
+					file.CopyTo(backup.FullName);
+				}
+			}
 
-                if (!backup.Exists)
-                {
-                    file.CopyTo(backup.FullName);
-                }
-            }
+			this.XML.Save(this.FilePath);
+		}
 
-            XML.Save(FilePath);
-        }
+		private void process() {
+			this.Loot.Clear();
 
-        private void process()
-        {
-            Loot.Clear();
-
-            foreach(XElement node in XML.Elements())
-            {
-                Loot.Add(new LootType(node));
-            }
-        }
-
-    }
+			foreach (XElement node in this.XML.Elements()) {
+				this.Loot.Add(new LootType(node));
+			}
+		}
+	}
 }

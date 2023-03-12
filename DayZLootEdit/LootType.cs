@@ -1,179 +1,207 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 
-namespace DayZLootEdit
-{
-    public class LootType
-    {
-        private XElement xtype;
+namespace DayZLootEdit {
+	public class LootType {
+		private XElement xtype;
 
-        public string Name
-        {
-            get { return xtype.Attribute("name")?.Value; }
-            set { xtype.Attribute("name").Value = value; }
-        }
+		public LootType(XElement xnode) {
+			this.xtype = xnode;
+		}
 
-        public string Category
-        {
-            get { return xtype.Element("category")?.Attribute("name").Value; }
-            set { xtype.Element("category")?.Attribute("name")?.SetValue(value); }
-        }
+		public String Name {
+			get {
+				return this.xtype.Attribute("name")?.Value;
+			}
+			set {
+				this.xtype.Attribute("name").Value = value;
+			}
+		}
 
-        public int Nominal
-        {
-            get { return GetValueInt(xtype, "nominal"); }
-            set { xtype.Element("nominal")?.SetValue(value.ToString()); }
-        }
+		public String Category {
+			get {
+				return this.xtype.Element("category")?.Attribute("name").Value;
+			}
+			set {
+				this.xtype.Element("category")?.Attribute("name")?.SetValue(value);
+			}
+		}
 
-        public int Lifetime
-        {
-            get { return Lifetime = GetValueInt(xtype, "lifetime"); }
-            set { xtype.Element("lifetime")?.SetValue(value.ToString()); }
-        }
-        public int Restock
-        {
-            get { return GetValueInt(xtype, "restock"); }
-            set { xtype.Element("restock")?.SetValue(value.ToString()); }
-        }
-        public int Min
-        {
-            get { return GetValueInt(xtype, "min"); }
-            set { xtype.Element("min")?.SetValue(value.ToString()); }
-        }
-        public int QuantMin
-        {
-            get { return GetValueInt(xtype, "quantmin"); }
-            set { xtype.Element("quantmin")?.SetValue(value.ToString()); }
-        }
-        public int QuantMax
-        {
-            get { return GetValueInt(xtype, "quantmax"); }
-            set { xtype.Element("quantmax")?.SetValue(value.ToString()); }
-        }
-        public int Cost
-        {
-            get { return GetValueInt(xtype, "cost"); }
-            set { xtype.Element("cost")?.SetValue(value.ToString()); }
-        }
+		public Int32 Nominal {
+			get {
+				return this.GetValueInt(this.xtype, "nominal");
+			}
+			set {
+				this.xtype.Element("nominal")?.SetValue(value.ToString());
+			}
+		}
 
-        public bool CountInCargo
-        {
-            get { return GetFlag(xtype, "count_in_cargo"); }
-            set { xtype.Element("flags")?.Attribute("count_in_cargo")?.SetValue(value.ToString()); }
-        }
-        public bool CountInHoarder
-        {
-            get { return GetFlag(xtype, "count_in_hoarder"); }
-            set { xtype.Element("flags")?.Attribute("count_in_hoarder")?.SetValue(value.ToString()); }
-        }
-        public bool CountInMap
-        {
-            get { return GetFlag(xtype, "count_in_map"); }
-            set { xtype.Element("flags")?.Attribute("count_in_map")?.SetValue(value.ToString()); }
-        }
-        public bool CountInPlayer
-        {
-            get { return GetFlag(xtype, "count_in_player"); }
-            set { xtype.Element("flags")?.Attribute("count_in_player")?.SetValue(value.ToString()); }
-        }
+		public Int32 Lifetime {
+			get {
+				return this.Lifetime = this.GetValueInt(this.xtype, "lifetime");
+			}
+			set {
+				this.xtype.Element("lifetime")?.SetValue(value.ToString());
+			}
+		}
 
-        public bool Crafted
-        {
-            get { return GetFlag(xtype, "crafted"); }
-            set { xtype.Element("flags")?.Attribute("crafted")?.SetValue(value.ToString()); }
-        }
-        public bool Deloot
-        {
-            get { return GetFlag(xtype, "deloot"); }
-            set { xtype.Element("flags")?.Attribute("deloot")?.SetValue(value.ToString()); }
-        }
+		public Int32 Restock {
+			get {
+				return this.GetValueInt(this.xtype, "restock");
+			}
+			set {
+				this.xtype.Element("restock")?.SetValue(value.ToString());
+			}
+		}
 
-        public LootType(XElement xnode)
-        {
-            this.xtype = xnode;
-        }
+		public Int32 Min {
+			get {
+				return this.GetValueInt(this.xtype, "min");
+			}
+			set {
+				this.xtype.Element("min")?.SetValue(value.ToString());
+			}
+		}
 
-        public string Usage {
-            get
-            {
-                return string.Join(", ",
-                    xtype.Elements().Where(
-                    node => node.Name.LocalName.Equals("usage")
-                    ).Select(
-                    node => node.Attribute("name")?.Value
-                    ));
-            }
-            set {
-                xtype.Elements().Where(node => node.Name.LocalName.Equals("usage")).Remove();
+		public Int32 QuantMin {
+			get {
+				return this.GetValueInt(this.xtype, "quantmin");
+			}
+			set {
+				this.xtype.Element("quantmin")?.SetValue(value.ToString());
+			}
+		}
 
-                foreach (string s in value.Split(',').Select(s => s.Trim()))
-                {
-                    xtype.Add(new XElement("usage", new XAttribute("name", s)));
-                }
-            }
-        }
+		public Int32 QuantMax {
+			get {
+				return this.GetValueInt(this.xtype, "quantmax");
+			}
+			set {
+				this.xtype.Element("quantmax")?.SetValue(value.ToString());
+			}
+		}
 
-        public string Value
-        {
-            get
-            {
-                return string.Join(", ",
-                    xtype.Elements().Where(
-                    node => node.Name.LocalName.Equals("usage")
-                    ).Select(
-                    node => node.Attribute("name")?.Value
-                    ));
-            }
-            set
-            {
-                xtype.Elements().Where(node => node.Name.LocalName.Equals("value")).Remove();
+		public Int32 Cost {
+			get {
+				return this.GetValueInt(this.xtype, "cost");
+			}
+			set {
+				this.xtype.Element("cost")?.SetValue(value.ToString());
+			}
+		}
 
-                foreach (string s in value.Split(',').Select(s => s.Trim()))
-                {
-                    xtype.Add(new XElement("value", new XAttribute("name", s)));
-                }
-            }
-        }
+		public Boolean CountInCargo {
+			get {
+				return this.GetFlag(this.xtype, "count_in_cargo");
+			}
+			set {
+				this.xtype.Element("flags")?.Attribute("count_in_cargo")?.SetValue(value.ToString());
+			}
+		}
 
-        private int GetValueInt(XElement node, string name)
-        {
-            int val = 0;
-            int.TryParse(node.Element(name)?.Value, out val);
-            return val;
-        }
+		public Boolean CountInHoarder {
+			get {
+				return this.GetFlag(this.xtype, "count_in_hoarder");
+			}
+			set {
+				this.xtype.Element("flags")?.Attribute("count_in_hoarder")?.SetValue(value.ToString());
+			}
+		}
 
-        private bool GetFlag(XElement node, string attrib)
-        {
-            return (bool)node.Element("flags")?.Attribute(attrib)?.Value.Equals("1");
-        }
+		public Boolean CountInMap {
+			get {
+				return this.GetFlag(this.xtype, "count_in_map");
+			}
+			set {
+				this.xtype.Element("flags")?.Attribute("count_in_map")?.SetValue(value.ToString());
+			}
+		}
 
-        public void SetNominal(int percentage)
-        {
-            Nominal = (int) Math.Round(Nominal / 100.0 * percentage);
-        }
+		public Boolean CountInPlayer {
+			get {
+				return this.GetFlag(this.xtype, "count_in_player");
+			}
+			set {
+				this.xtype.Element("flags")?.Attribute("count_in_player")?.SetValue(value.ToString());
+			}
+		}
 
-        public void RemoveType()
-        {
-            xtype.Remove();
-        }
+		public Boolean Crafted {
+			get {
+				return this.GetFlag(this.xtype, "crafted");
+			}
+			set {
+				this.xtype.Element("flags")?.Attribute("crafted")?.SetValue(value.ToString());
+			}
+		}
 
-        /*
-        <type name="AKM">
-            <nominal>40</nominal>
-            <lifetime>10800</lifetime>
-            <restock>1800</restock>
-            <min>20</min>
-            <quantmin>-1</quantmin>
-            <quantmax>-1</quantmax>
-            <cost>100</cost>
-            <flags count_in_cargo="1" count_in_hoarder="1" count_in_map="1" count_in_player="0" crafted="0" deloot="0"/>
-            <category name="weapons"/>
-            <usage name="Military"/>
-        </type>
-         */
-    }
+		public Boolean Deloot {
+			get {
+				return this.GetFlag(this.xtype, "deloot");
+			}
+			set {
+				this.xtype.Element("flags")?.Attribute("deloot")?.SetValue(value.ToString());
+			}
+		}
+
+		public String Usage {
+			get {
+				return String.Join(", ", this.xtype.Elements().Where(node => node.Name.LocalName.Equals("usage")).Select(node => node.Attribute("name")?.Value));
+			}
+			set {
+				this.xtype.Elements().Where(node => node.Name.LocalName.Equals("usage")).Remove();
+
+				foreach (String s in value.Split(',').Select(s => s.Trim())) {
+					this.xtype.Add(new XElement("usage", new XAttribute("name", s)));
+				}
+			}
+		}
+
+		public String Value {
+			get {
+				return String.Join(", ", this.xtype.Elements().Where(node => node.Name.LocalName.Equals("usage")).Select(node => node.Attribute("name")?.Value));
+			}
+			set {
+				this.xtype.Elements().Where(node => node.Name.LocalName.Equals("value")).Remove();
+
+				foreach (String s in value.Split(',').Select(s => s.Trim())) {
+					this.xtype.Add(new XElement("value", new XAttribute("name", s)));
+				}
+			}
+		}
+
+		private Int32 GetValueInt(XElement node, String name) {
+			Int32 val = 0;
+			Int32.TryParse(node.Element(name)?.Value, out val);
+			return val;
+		}
+
+		private Boolean GetFlag(XElement node, String attrib) {
+			return (Boolean)node.Element("flags")?.Attribute(attrib)?.Value.Equals("1");
+		}
+
+		public void SetNominal(Int32 percentage) {
+			this.Nominal = (Int32)Math.Round(this.Nominal / 100.0 * percentage);
+		}
+
+		public void RemoveType() {
+			this.xtype.Remove();
+		}
+
+		/*
+		<type name="AKM">
+			<nominal>40</nominal>
+			<lifetime>10800</lifetime>
+			<restock>1800</restock>
+			<min>20</min>
+			<quantmin>-1</quantmin>
+			<quantmax>-1</quantmax>
+			<cost>100</cost>
+			<flags count_in_cargo="1" count_in_hoarder="1" count_in_map="1" count_in_player="0" crafted="0" deloot="0"/>
+			<category name="weapons"/>
+			<usage name="Military"/>
+		</type>
+		 */
+	}
 }

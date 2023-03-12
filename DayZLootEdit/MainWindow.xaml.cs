@@ -1,103 +1,105 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace DayZLootEdit {
 	/// <summary>
-	/// Interaktionslogik für MainWindow.xaml
+	///     Interaktionslogik für MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window {
-		private LootTable LootTable;
-		private HashSet<String> _attachmentTypes = new HashSet<string>() { "Hndgrd", "Bttstck","Bayonet","Compensator","NVGoggles","Optic","Light","Suppressor" };
+		private static HashSet<String> _attachmentTypes = new HashSet<String> {
+			"Hndgrd",
+			"Bttstck",
+			"Bayonet",
+			"Compensator",
+			"NVGoggles",
+			"Optic",
+			"Light",
+			"Suppressor"
+		};
+
+		private static Func<LootTable, IEnumerable<LootType>>[] Filters = {
+			FilterWeapons, FilterClothes, FilterFood, FilterExplosives, FilterContainers, FilterTools, FilterVehicleParts, FilterUnCategorized, FilterAmmo, FilterAttachments
+		};
+
+		private Int32? _filterMethod;
+		private LootTable _lootTable;
+
 		public MainWindow() {
-			InitializeComponent();
+			this.InitializeComponent();
 		}
 
-		private void LoadBtn_Click(object sender, RoutedEventArgs e) {
+		private void LoadBtn_Click(Object sender, RoutedEventArgs e) {
 			OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
 			if (dlg.ShowDialog().Value) {
-				LootTable = new LootTable(dlg.FileName);
-				LootTable.LoadFile();
-
-				LootList.ItemsSource = LootTable.Loot;
-
-				LootList.IsEnabled = true;
-				SaveBtn.IsEnabled = true;
+				this._lootTable = new LootTable(dlg.FileName);
+				this._lootTable.LoadFile();
+				this.LootList.ItemsSource = this._lootTable.Loot;
+				this.LootList.IsEnabled = true;
+				this.SaveBtn.IsEnabled = true;
 			}
 		}
 
-		private void LootList_SelectionChanged(object sender, SelectionChangedEventArgs e) {
-			LootPercBox.IsEnabled = LootList.SelectedItems.Count > 0;
+		private void LootList_SelectionChanged(Object sender, SelectionChangedEventArgs e) {
+			this.LootPercBox.IsEnabled = this.LootList.SelectedItems.Count > 0;
 		}
 
-		private void PercBtn_Click(object sender, RoutedEventArgs e) {
-			int percentage = 0;
-			bool ok = int.TryParse(PercBox.Text.Replace("%", ""), out percentage);
-			if (!ok) return;
+		private void PercBtn_Click(Object sender, RoutedEventArgs e) {
+			if (!Int32.TryParse(this.PercBox.Text.Replace("%", ""), out Int32 percentage)) {
+				return;
+			}
 
-			foreach (LootType loot in LootList.SelectedItems) {
+			foreach (LootType loot in this.LootList.SelectedItems) {
 				loot.SetNominal(percentage);
 			}
 
-			LootList.Items.Refresh();
-
-			PercBox.Text = "0";
-			UpdatePercValue();
+			this.LootList.Items.Refresh();
+			this.PercBox.Text = "0";
+			this.UpdatePercValue();
 		}
 
-		private void PercSilder_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e) {
-			PercBox.Text = Math.Round(PercSilder.Value).ToString();
-			UpdatePercValue();
+		private void PercSilder_ValueChanged(Object sender, RoutedPropertyChangedEventArgs<Double> e) {
+			this.PercBox.Text = Math.Round(this.PercSilder.Value).ToString(CultureInfo.CurrentCulture);
+			this.UpdatePercValue();
 		}
 
-		private void PercBox_GotFocus(object sender, RoutedEventArgs e) {
-			PercBox.SelectAll();
+		private void PercBox_GotFocus(Object sender, RoutedEventArgs e) {
+			this.PercBox.SelectAll();
 		}
 
-		private void PercBox_LostFocus(object sender, RoutedEventArgs e) {
-			UpdatePercValue();
+		private void PercBox_LostFocus(Object sender, RoutedEventArgs e) {
+			this.UpdatePercValue();
 		}
 
-		private void PercBox_KeyUp(object sender, KeyEventArgs e) {
+		private void PercBox_KeyUp(Object sender, KeyEventArgs e) {
 			if (e.Key == Key.Enter) {
-				UpdatePercValue();
+				this.UpdatePercValue();
 			}
 		}
 
 		private void UpdatePercValue() {
-			int newval = 0;
-			bool ok = int.TryParse(PercBox.Text.Replace("%", ""), out newval);
-
-			if (ok) {
-				PercSilder.Value = newval;
-				PercBox.Text = String.Format("{0}%", newval);
-				PercBtn?.Focus();
+			if (Int32.TryParse(this.PercBox.Text.Replace("%", ""), out Int32 newval)) {
+				this.PercSilder.Value = newval;
+				this.PercBox.Text = $"{newval}%";
+				this.PercBtn?.Focus();
 			}
 		}
 
-		private void SaveBtn_Click(object sender, RoutedEventArgs e) {
-			LootTable.SaveFile();
+		private void SaveBtn_Click(Object sender, RoutedEventArgs e) {
+			this._lootTable.SaveFile();
 		}
 
-		private void PreviewKeyDownHandler(object sender, KeyEventArgs e) {
+		private void PreviewKeyDownHandler(Object sender, KeyEventArgs e) {
 			switch (e.Key) {
 				case Key.Delete:
 				case Key.Back:
-					foreach (LootType loot in LootList.SelectedItems) {
+					foreach (LootType loot in this.LootList.SelectedItems) {
 						loot.RemoveType();
 					}
 
@@ -107,72 +109,116 @@ namespace DayZLootEdit {
 
 		private void ChangeSearchFilter(Object sender, TextChangedEventArgs e) {
 			if (!(sender is TextBox textBox)) {
-				Debug.WriteLine("What?");
 				return;
 			}
 
-			LootList.ItemsSource = LootTable.Loot.Where(l => StrContains(l.Name, textBox.Text, StringComparison.CurrentCultureIgnoreCase));
-			this.LootList.Items.Refresh();
-			Debug.WriteLine("Updated");
+			this.LootList.ItemsSource = this.GetItemsFromFilter().Where(l => StrContains(l.Name, textBox.Text, StringComparison.CurrentCultureIgnoreCase));
 		}
 
-		public static bool StrContains(string source, string toCheck, StringComparison comp) {
+		public static Boolean StrContains(String source, String toCheck, StringComparison comp) {
 			return source?.IndexOf(toCheck, comp) >= 0;
 		}
 
-		private void WeaponsTab_Click(object sender, RoutedEventArgs e)
-		{
-			LootList.ItemsSource = 
-				LootTable.Loot.Where(x => x.Category == "weapons" &&
-				!(x.Name.StartsWith("Mag_")
-				|| x.Name.StartsWith("Ammo") || this._attachmentTypes.Any(weapon => x.Name.Contains(weapon))));
-
-			this.LootList.Items.Refresh();
-        }
-
-		private void ClothesTab_Click(object sender, RoutedEventArgs e)
-		{
-			LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "clothes");
+		private IEnumerable<LootType> GetItemsFromFilter() {
+			return this._filterMethod.HasValue ? Filters[this._filterMethod.Value](this._lootTable) : this._lootTable.Loot;
 		}
 
-		private void FoodTab_Click(object sender, RoutedEventArgs e)
-		{
-            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "food");
-        }
-
-		private void ExplosivesTab_Click(object sender, RoutedEventArgs e)
-		{
-            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "explosives");
-        }
-
-		private void ContainersTab_Click(object sender, RoutedEventArgs e)
-		{
-            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "containers");
-        }
-
-		private void ToolsTab_Click(object sender, RoutedEventArgs e)
-		{
-            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "tools");
-        }
-
-		private void VehiclePartsTab_Click(object sender, RoutedEventArgs e)
-		{
-            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "vehiclesparts");
-        }
-
-		private void UnCategorizedTab_Click(object sender, RoutedEventArgs e)
-		{
-            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == null);
-        }
-
-		private void AmmoTab_Click(object sender, RoutedEventArgs e)
-		{
-            LootList.ItemsSource = LootTable.Loot.Where(item => item.Name.StartsWith("Ammo"));
-        }
-
-		private void AttachmentsTab_Click(object sender, RoutedEventArgs e)
-		{
-			LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "weapons" && this._attachmentTypes.Any(x => item.Name.Contains(x) || item.Name.StartsWith("Mag")));
+		private void UpdateDataGrid() {
+			this.LootList.ItemsSource = this.GetItemsFromFilter();
 		}
+
+#region Filter Methods
+		private static IEnumerable<LootType> FilterWeapons(LootTable lootTable) {
+			return lootTable.Loot.Where(x => x.Category == "weapons" && !(x.Name.StartsWith("Mag_") || x.Name.StartsWith("Ammo") || _attachmentTypes.Any(weapon => x.Name.Contains(weapon))));
+		}
+
+		private static IEnumerable<LootType> FilterClothes(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == "clothes");
+		}
+
+		private static IEnumerable<LootType> FilterFood(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == "food");
+		}
+
+		private static IEnumerable<LootType> FilterExplosives(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == "explosives");
+		}
+
+		private static IEnumerable<LootType> FilterContainers(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == "containers");
+		}
+
+		private static IEnumerable<LootType> FilterTools(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == "tools");
+		}
+
+		private static IEnumerable<LootType> FilterVehicleParts(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == "vehiclesparts");
+		}
+
+		private static IEnumerable<LootType> FilterUnCategorized(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == null);
+		}
+
+		private static IEnumerable<LootType> FilterAmmo(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == "weapons" && item.Name.StartsWith("Ammo"));
+		}
+
+		private static IEnumerable<LootType> FilterAttachments(LootTable lootTable) {
+			return lootTable.Loot.Where(item => item.Category == "weapons" && _attachmentTypes.Any(x => item.Name.Contains(x) || item.Name.StartsWith("Mag")));
+		}
+#endregion
+
+#region Filter Button Events
+		private void WeaponsTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 0;
+			this.UpdateDataGrid();
+		}
+
+		private void ClothesTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 1;
+			this.UpdateDataGrid();
+		}
+
+		private void FoodTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 2;
+			this.UpdateDataGrid();
+		}
+
+		private void ExplosivesTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 3;
+			this.UpdateDataGrid();
+		}
+
+		private void ContainersTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 4;
+			this.UpdateDataGrid();
+		}
+
+		private void ToolsTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 5;
+			this.UpdateDataGrid();
+		}
+
+		private void VehiclePartsTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 6;
+			this.UpdateDataGrid();
+		}
+
+		private void UnCategorizedTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 7;
+			this.UpdateDataGrid();
+		}
+
+		private void AmmoTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 8;
+			this.UpdateDataGrid();
+		}
+
+		private void AttachmentsTab_Click(Object sender, RoutedEventArgs e) {
+			this._filterMethod = 9;
+			this.UpdateDataGrid();
+		}
+#endregion
 	}
 }
