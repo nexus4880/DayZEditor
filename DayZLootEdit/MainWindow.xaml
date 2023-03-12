@@ -72,7 +72,7 @@
             <Button x:Name="PercBtn" Content="Set" HorizontalAlignment="Left" Margin="0,-42,0,0"
                     VerticalAlignment="Top" Width="40" Height="40" DockPanel.Dock="Right" Click="PercBtn_Click" />
         </DockPanel>
-        <Label Content="© icelane.net 2018" Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right" Margin="0,23,25,0"
+        <Label Content="© icelane.net 2018" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" Margin="0,23,25,0"
                VerticalAlignment="Top" Width="116" Cursor="" />
     </Grid>
 </Window>
