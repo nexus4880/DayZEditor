@@ -21,7 +21,7 @@ namespace DayZLootEdit {
 	/// </summary>
 	public partial class MainWindow : Window {
 		private LootTable LootTable;
-
+		private HashSet<String> _attachmentTypes = new HashSet<string>() { "Hndgrd", "Bttstck","Bayonet","Compensator","NVGoggles","Optic","Light","Suppressor" };
 		public MainWindow() {
 			InitializeComponent();
 		}
@@ -118,6 +118,61 @@ namespace DayZLootEdit {
 
 		public static bool StrContains(string source, string toCheck, StringComparison comp) {
 			return source?.IndexOf(toCheck, comp) >= 0;
+		}
+
+		private void WeaponsTab_Click(object sender, RoutedEventArgs e)
+		{
+			LootList.ItemsSource = 
+				LootTable.Loot.Where(x => x.Category == "weapons" &&
+				!(x.Name.StartsWith("Mag_")
+				|| x.Name.StartsWith("Ammo") || this._attachmentTypes.Any(weapon => x.Name.Contains(weapon))));
+
+			this.LootList.Items.Refresh();
+        }
+
+		private void ClothesTab_Click(object sender, RoutedEventArgs e)
+		{
+			LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "clothes");
+		}
+
+		private void FoodTab_Click(object sender, RoutedEventArgs e)
+		{
+            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "food");
+        }
+
+		private void ExplosivesTab_Click(object sender, RoutedEventArgs e)
+		{
+            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "explosives");
+        }
+
+		private void ContainersTab_Click(object sender, RoutedEventArgs e)
+		{
+            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "containers");
+        }
+
+		private void ToolsTab_Click(object sender, RoutedEventArgs e)
+		{
+            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "tools");
+        }
+
+		private void VehiclePartsTab_Click(object sender, RoutedEventArgs e)
+		{
+            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "vehiclesparts");
+        }
+
+		private void UnCategorizedTab_Click(object sender, RoutedEventArgs e)
+		{
+            LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == null);
+        }
+
+		private void AmmoTab_Click(object sender, RoutedEventArgs e)
+		{
+            LootList.ItemsSource = LootTable.Loot.Where(item => item.Name.StartsWith("Ammo"));
+        }
+
+		private void AttachmentsTab_Click(object sender, RoutedEventArgs e)
+		{
+			LootList.ItemsSource = LootTable.Loot.Where(item => item.Category == "weapons" && this._attachmentTypes.Any(x => item.Name.Contains(x) || item.Name.StartsWith("Mag")));
 		}
 	}
 }

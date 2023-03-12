@@ -20,7 +20,20 @@
                   IsEnabled="False" SelectionChanged="LootList_SelectionChanged" PreviewKeyDown="PreviewKeyDownHandler"
                   Grid.ColumnSpan="3">
         </DataGrid>
-        <TextBox x:Name="SearchBox" Height="16" Width="180" TextChanged="ChangeSearchFilter"></TextBox>
+        <TextBox x:Name="SearchBox" Height="16" Width="180"  TextChanged="ChangeSearchFilter" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment ="Top" Margin="400,23,0,0"></TextBox>
+        <WrapPanel Orientation="Horizontal" Grid.ColumnSpan="2" Margin="602,3,10,470" Grid.Column="1">
+            <Button Name="WeaponsTab" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Weapon Tab" Grid.Column="1" Click="WeaponsTab_Click"/>
+            <Button Name="ClothesTab" Height="20" HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Clothes Tab" Grid.Column="1" Click="ClothesTab_Click"/>
+            <Button Name="FoodTab" Height="20" HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Food Tab" Grid.Column="1" Click="FoodTab_Click"/>
+            <Button Name="ExplosivesTab" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" Content="Explosives Tab" Grid.Column="1" Click="ExplosivesTab_Click" Width="95" Grid.ColumnSpan="2"/>
+            <Button Name="ContainersTab" Height="20" HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Containers Tab" Grid.Column="2" Click="ContainersTab_Click" Width="87"/>
+            <Button Name="ToolsTab" Height="20" HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Tools Tab" Grid.Column="2" Click="ToolsTab_Click" RenderTransformOrigin="0.54,0.552"/>
+            <Button Name="VehiclePartsTab" Height="20" HorizontalAlignment="Left"  VerticalAlignment="Top" Content="Vehicle Parts Tab" Grid.Column="2" Click="VehiclePartsTab_Click" RenderTransformOrigin="0.54,0.552"/>
+            <Button Name="UnCategorizedTab" Height="20" HorizontalAlignment="Left"  VerticalAlignment="Top" Content="UnCategorized Tab" Grid.Column="2" Click="UnCategorizedTab_Click" RenderTransformOrigin="0.54,0.552"/>
+            <Button Name="AmmoTab" Height="20" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Content="UnCategorized Tab" Grid.Column="2" Click="AmmoTab_Click" RenderTransformOrigin="0.54,0.552"/>
+            <Button Name="AttachmentsTab" Height="20" HorizontalAlignment="Left"  VerticalAlignment="Bottom" Content="Attachments Tab" Grid.Column="2" Click="AttachmentsTab_Click" RenderTransformOrigin="0.54,0.552"/>
+        </WrapPanel>
+
         <Button x:Name="LoadBtn" Content="Load" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"
                 Width="40" Height="40" Click="LoadBtn_Click" />
         <Button Content="Button" HorizontalAlignment="Left" Margin="55,10,0,0" VerticalAlignment="Top" Width="40"
@@ -41,8 +54,7 @@
             <Button x:Name="PercBtn" Content="Set" HorizontalAlignment="Left" Margin="0,-42,0,0"
                     VerticalAlignment="Top" Width="40" Height="40" DockPanel.Dock="Right" Click="PercBtn_Click" />
         </DockPanel>
-        <Label Content="© icelane.net 2018" Grid.Column="2" HorizontalAlignment="Right" Margin="0,10,0,0"
+        <Label Content="© icelane.net 2018" Grid.Column="1" HorizontalAlignment="Right" Margin="0,23,25,0"
                VerticalAlignment="Top" Width="116" Cursor="" />
-
     </Grid>
 </Window>
