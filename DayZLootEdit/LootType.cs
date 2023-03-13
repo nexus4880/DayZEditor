@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml.Linq;
 
 namespace DayZLootEdit {
+	[SuppressMessage("ReSharper", "PossibleNullReferenceException")]
 	public class LootType {
 		private XElement xtype;
 
@@ -30,7 +32,7 @@ namespace DayZLootEdit {
 
 		public Int32 Nominal {
 			get {
-				return this.GetValueInt(this.xtype, "nominal");
+				return GetValueInt(this.xtype, "nominal");
 			}
 			set {
 				this.xtype.Element("nominal")?.SetValue(value.ToString());
@@ -39,7 +41,7 @@ namespace DayZLootEdit {
 
 		public Int32 Lifetime {
 			get {
-				return this.Lifetime = this.GetValueInt(this.xtype, "lifetime");
+				return this.Lifetime = GetValueInt(this.xtype, "lifetime");
 			}
 			set {
 				this.xtype.Element("lifetime")?.SetValue(value.ToString());
@@ -48,7 +50,7 @@ namespace DayZLootEdit {
 
 		public Int32 Restock {
 			get {
-				return this.GetValueInt(this.xtype, "restock");
+				return GetValueInt(this.xtype, "restock");
 			}
 			set {
 				this.xtype.Element("restock")?.SetValue(value.ToString());
@@ -57,7 +59,7 @@ namespace DayZLootEdit {
 
 		public Int32 Min {
 			get {
-				return this.GetValueInt(this.xtype, "min");
+				return GetValueInt(this.xtype, "min");
 			}
 			set {
 				this.xtype.Element("min")?.SetValue(value.ToString());
@@ -66,7 +68,7 @@ namespace DayZLootEdit {
 
 		public Int32 QuantMin {
 			get {
-				return this.GetValueInt(this.xtype, "quantmin");
+				return GetValueInt(this.xtype, "quantmin");
 			}
 			set {
 				this.xtype.Element("quantmin")?.SetValue(value.ToString());
@@ -75,7 +77,7 @@ namespace DayZLootEdit {
 
 		public Int32 QuantMax {
 			get {
-				return this.GetValueInt(this.xtype, "quantmax");
+				return GetValueInt(this.xtype, "quantmax");
 			}
 			set {
 				this.xtype.Element("quantmax")?.SetValue(value.ToString());
@@ -84,7 +86,7 @@ namespace DayZLootEdit {
 
 		public Int32 Cost {
 			get {
-				return this.GetValueInt(this.xtype, "cost");
+				return GetValueInt(this.xtype, "cost");
 			}
 			set {
 				this.xtype.Element("cost")?.SetValue(value.ToString());
@@ -93,55 +95,55 @@ namespace DayZLootEdit {
 
 		public Boolean CountInCargo {
 			get {
-				return this.GetFlag(this.xtype, "count_in_cargo");
+				return GetFlag(this.xtype, "count_in_cargo");
 			}
 			set {
-				this.xtype.Element("flags")?.Attribute("count_in_cargo")?.SetValue(value.ToString());
+				this.xtype.Element("flags")?.Attribute("count_in_cargo")?.SetValue(value ? "1" : "0");
 			}
 		}
 
 		public Boolean CountInHoarder {
 			get {
-				return this.GetFlag(this.xtype, "count_in_hoarder");
+				return GetFlag(this.xtype, "count_in_hoarder");
 			}
 			set {
-				this.xtype.Element("flags")?.Attribute("count_in_hoarder")?.SetValue(value.ToString());
+				this.xtype.Element("flags")?.Attribute("count_in_hoarder")?.SetValue(value ? "1" : "0");
 			}
 		}
 
 		public Boolean CountInMap {
 			get {
-				return this.GetFlag(this.xtype, "count_in_map");
+				return GetFlag(this.xtype, "count_in_map");
 			}
 			set {
-				this.xtype.Element("flags")?.Attribute("count_in_map")?.SetValue(value.ToString());
+				this.xtype.Element("flags")?.Attribute("count_in_map")?.SetValue(value ? "1" : "0");
 			}
 		}
 
 		public Boolean CountInPlayer {
 			get {
-				return this.GetFlag(this.xtype, "count_in_player");
+				return GetFlag(this.xtype, "count_in_player");
 			}
 			set {
-				this.xtype.Element("flags")?.Attribute("count_in_player")?.SetValue(value.ToString());
+				this.xtype.Element("flags")?.Attribute("count_in_player")?.SetValue(value ? "1" : "0");
 			}
 		}
 
 		public Boolean Crafted {
 			get {
-				return this.GetFlag(this.xtype, "crafted");
+				return GetFlag(this.xtype, "crafted");
 			}
 			set {
-				this.xtype.Element("flags")?.Attribute("crafted")?.SetValue(value.ToString());
+				this.xtype.Element("flags")?.Attribute("crafted")?.SetValue(value ? "1" : "0");
 			}
 		}
 
 		public Boolean Deloot {
 			get {
-				return this.GetFlag(this.xtype, "deloot");
+				return GetFlag(this.xtype, "deloot");
 			}
 			set {
-				this.xtype.Element("flags")?.Attribute("deloot")?.SetValue(value.ToString());
+				this.xtype.Element("flags")?.Attribute("deloot")?.SetValue(value ? "1" : "0");
 			}
 		}
 
@@ -151,7 +153,6 @@ namespace DayZLootEdit {
 			}
 			set {
 				this.xtype.Elements().Where(node => node.Name.LocalName.Equals("usage")).Remove();
-
 				foreach (String s in value.Split(',').Select(s => s.Trim())) {
 					this.xtype.Add(new XElement("usage", new XAttribute("name", s)));
 				}
@@ -164,21 +165,19 @@ namespace DayZLootEdit {
 			}
 			set {
 				this.xtype.Elements().Where(node => node.Name.LocalName.Equals("value")).Remove();
-
 				foreach (String s in value.Split(',').Select(s => s.Trim())) {
 					this.xtype.Add(new XElement("value", new XAttribute("name", s)));
 				}
 			}
 		}
 
-		private Int32 GetValueInt(XElement node, String name) {
-			Int32 val = 0;
-			Int32.TryParse(node.Element(name)?.Value, out val);
+		private static Int32 GetValueInt(XContainer node, String name) {
+			Int32.TryParse(node.Element(name)?.Value, out Int32 val);
 			return val;
 		}
 
-		private Boolean GetFlag(XElement node, String attrib) {
-			return (Boolean)node.Element("flags")?.Attribute(attrib)?.Value.Equals("1");
+		private static Boolean GetFlag(XContainer node, String attrib) {
+			return node.Element("flags")?.Attribute(attrib)?.Value == "1";
 		}
 
 		public void SetNominal(Int32 percentage) {
@@ -188,20 +187,5 @@ namespace DayZLootEdit {
 		public void RemoveType() {
 			this.xtype.Remove();
 		}
-
-		/*
-		<type name="AKM">
-			<nominal>40</nominal>
-			<lifetime>10800</lifetime>
-			<restock>1800</restock>
-			<min>20</min>
-			<quantmin>-1</quantmin>
-			<quantmax>-1</quantmax>
-			<cost>100</cost>
-			<flags count_in_cargo="1" count_in_hoarder="1" count_in_map="1" count_in_player="0" crafted="0" deloot="0"/>
-			<category name="weapons"/>
-			<usage name="Military"/>
-		</type>
-		 */
 	}
 }

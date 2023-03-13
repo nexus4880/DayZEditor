@@ -1,9 +1,4 @@
-﻿using System.Windows;
-
-namespace DayZLootEdit {
-    /// <summary>
-    ///     Interaktionslogik für "App.xaml"
-    /// </summary>
-    public partial class App : Application {
+﻿namespace DayZLootEdit {
+	public partial class App {
 	}
 }
