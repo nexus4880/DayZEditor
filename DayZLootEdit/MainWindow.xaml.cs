@@ -36,9 +36,11 @@ namespace DayZLootEdit {
 		}
 
 		private void LoadBtn_Click(Object sender, RoutedEventArgs e) {
-			OpenFileDialog dlg = new OpenFileDialog();
-			dlg.Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*";
-			if (dlg.ShowDialog().Value) {
+			OpenFileDialog dlg = new OpenFileDialog {
+				Filter = "XML Files (*.xml)|*.xml|All Files (*.*)|*.*"
+			};
+
+			if (dlg.ShowDialog().GetValueOrDefault(false)) {
 				this._lootTable = new LootTable(dlg.FileName);
 				this._lootTable.LoadFile();
 				this.LootList.ItemsSource = this._lootTable.Loot;
@@ -52,12 +54,8 @@ namespace DayZLootEdit {
 		}
 
 		private void PercBtn_Click(Object sender, RoutedEventArgs e) {
-			if (!Int32.TryParse(this.PercBox.Text.Replace("%", ""), out Int32 percentage)) {
-				return;
-			}
-
 			foreach (LootType loot in this.LootList.SelectedItems) {
-				loot.SetNominal(percentage);
+				loot.SetNominal((Int32)this.PercSilder.Value);
 			}
 
 			this.LootList.Items.Refresh();
@@ -129,7 +127,10 @@ namespace DayZLootEdit {
 		}
 
 		private void UpdateDataGrid() {
-			this.LootList.ItemsSource = new ObservableCollection<LootType>(this.GetItemsFromFilter());
+			IEnumerable<LootType> items = this.GetItemsFromFilter();
+			if (items != null) {
+				this.LootList.ItemsSource = new ObservableCollection<LootType>(items);
+			}
 		}
 
 #region Filter Methods
