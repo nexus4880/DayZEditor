@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Windows;
@@ -112,7 +113,7 @@ namespace DayZLootEdit {
 				return;
 			}
 
-			this.LootList.ItemsSource = this.GetItemsFromFilter().Where(l => StrContains(l.Name, textBox.Text, StringComparison.CurrentCultureIgnoreCase));
+			this.LootList.ItemsSource = new ObservableCollection<LootType>(this.GetItemsFromFilter().Where(l => StrContains(l.Name, textBox.Text, StringComparison.CurrentCultureIgnoreCase)));
 		}
 
 		public static Boolean StrContains(String source, String toCheck, StringComparison comp) {
@@ -128,7 +129,7 @@ namespace DayZLootEdit {
 		}
 
 		private void UpdateDataGrid() {
-			this.LootList.ItemsSource = this.GetItemsFromFilter();
+			this.LootList.ItemsSource = new ObservableCollection<LootType>(this.GetItemsFromFilter());
 		}
 
 #region Filter Methods
